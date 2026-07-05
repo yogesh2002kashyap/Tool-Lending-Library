@@ -1,16 +1,16 @@
-# Strategy Manager
+# Tool Lending Library
 
-A full-stack MERN application for managing microservice decoupling strategies.
+A full-stack MERN application for managing a community tool lending library.
 
 ## Overview
 
-This project includes a React frontend and an Express/MongoDB backend for creating, viewing, editing, searching, and deleting strategy records.
+This project includes a React frontend and an Express/MongoDB backend for creating, viewing, editing, searching, and deleting tool records.
 
 ## Features
 
 - Responsive internal dashboard
-- CRUD operations for strategies
-- Local search by strategy name, service name, or owner
+- CRUD operations for tools
+- Local search by tool name, category, or borrower
 - Client-side validation and accessible forms
 - Loading, empty, and error states
 - Production-ready API with validation and XSS sanitization
@@ -34,7 +34,7 @@ This project includes a React frontend and an Express/MongoDB backend for creati
 
 ### Frontend
 
-- VITE_API_URL: deployed backend URL (for example, https://strategy-manager-l2pz.onrender.com/api)
+- VITE_API_URL: deployed backend URL (for example, https://tool-lending-library.onrender.com/api)
 
 ### Backend
 
@@ -67,13 +67,13 @@ npm run dev
 
 ## Live URLs
 
-- Frontend: https://strategy-manager-iota.vercel.app
-- Backend: https://strategy-manager-l2pz.onrender.com
+- Frontend: https://tool-lending-library.vercel.app
+- Backend: https://tool-lending-library.onrender.com
 
 ## API Overview
 
 - GET /api/health
-- GET /api/strategies
-- POST /api/strategies
-- PUT /api/strategies/:id
-- DELETE /api/strategies/:id
+- GET /api/tools
+- POST /api/tools
+- PUT /api/tools/:id
+- DELETE /api/tools/:id

@@ -1,4 +1,4 @@
-function StrategyTable({ strategies, onEdit, onDelete, isLoading }) {
+function ToolTable({ tools, onEdit, onDelete, isLoading }) {
   if (isLoading) {
     return (
       <div className="table-card" aria-live="polite">
@@ -11,56 +11,56 @@ function StrategyTable({ strategies, onEdit, onDelete, isLoading }) {
     );
   }
 
-  if (strategies.length === 0) {
+  if (tools.length === 0) {
     return (
       <div className="empty-state" role="status">
-        <p>No strategies found.</p>
+        <p>No tools found.</p>
       </div>
     );
   }
 
   return (
     <div className="table-card">
-      <table className="strategy-table">
+      <table className="tool-table">
         <thead>
           <tr>
-            <th scope="col">Strategy</th>
-            <th scope="col">Service</th>
-            <th scope="col">Owner</th>
+            <th scope="col">Tool</th>
+            <th scope="col">Category</th>
+            <th scope="col">Borrower</th>
             <th scope="col">Status</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {strategies.map((strategy) => (
-            <tr key={strategy._id}>
+          {tools.map((tool) => (
+            <tr key={tool._id}>
               <td>
                 <div className="table-primary">
-                  <strong>{strategy.strategyName}</strong>
-                  <span>{strategy.communicationType}</span>
+                  <strong>{tool.toolName}</strong>
+                  <span>{tool.condition}</span>
                 </div>
               </td>
-              <td>{strategy.serviceName}</td>
-              <td>{strategy.owner}</td>
+              <td>{tool.category}</td>
+              <td>{tool.borrower || '—'}</td>
               <td>
-                <span className={`status-pill ${strategy.status.toLowerCase()}`}>
-                  {strategy.status}
+                <span className={`status-pill ${tool.status.toLowerCase()}`}>
+                  {tool.status}
                 </span>
               </td>
               <td>
                 <div className="action-group">
                   <button
-                    aria-label={`Edit strategy ${strategy.strategyName}`}
+                    aria-label={`Edit tool ${tool.toolName}`}
                     className="link-button"
-                    onClick={() => onEdit(strategy)}
+                    onClick={() => onEdit(tool)}
                     type="button"
                   >
                     Edit
                   </button>
                   <button
-                    aria-label={`Delete strategy ${strategy.strategyName}`}
+                    aria-label={`Delete tool ${tool.toolName}`}
                     className="link-button destructive"
-                    onClick={() => onDelete(strategy)}
+                    onClick={() => onDelete(tool)}
                     type="button"
                   >
                     Delete
@@ -75,4 +75,4 @@ function StrategyTable({ strategies, onEdit, onDelete, isLoading }) {
   );
 }
 
-export default StrategyTable;
+export default ToolTable;

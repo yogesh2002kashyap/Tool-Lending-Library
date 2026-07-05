@@ -1,8 +1,8 @@
 import './App.css';
-import StrategyDashboard from './pages/StrategyDashboard';
+import ToolDashboard from './pages/ToolDashboard';
 
 function App() {
-  return <StrategyDashboard />;
+  return <ToolDashboard />;
 }
 
 export default App;

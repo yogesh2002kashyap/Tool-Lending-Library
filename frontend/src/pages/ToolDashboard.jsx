@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import StrategyForm from '../components/StrategyForm';
-import StrategyTable from '../components/StrategyTable';
-import { createStrategy, deleteStrategy, extractErrorMessage, getStrategies, updateStrategy } from '../services/strategyService';
+import ToolForm from '../components/ToolForm';
+import ToolTable from '../components/ToolTable';
+import { createTool, deleteTool, extractErrorMessage, getTools, updateTool } from '../services/toolService';
 
-function StrategyDashboard() {
-  const [strategies, setStrategies] = useState([]);
+function ToolDashboard() {
+  const [tools, setTools] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingStrategy, setEditingStrategy] = useState(null);
+  const [editingTool, setEditingTool] = useState(null);
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -18,14 +18,14 @@ function StrategyDashboard() {
   useEffect(() => {
     let isMounted = true;
 
-    const loadStrategies = async () => {
+    const loadTools = async () => {
       setLoading(true);
       setError('');
 
       try {
-        const data = await getStrategies();
+        const data = await getTools();
         if (isMounted) {
-          setStrategies(data);
+          setTools(data);
         }
       } catch (err) {
         if (isMounted) {
@@ -38,48 +38,44 @@ function StrategyDashboard() {
       }
     };
 
-    void loadStrategies();
+    void loadTools();
 
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const filteredStrategies = useMemo(() => {
+  const filteredTools = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
 
     if (!term) {
-      return strategies;
+      return tools;
     }
 
-    return strategies.filter((strategy) => {
-      const haystack = [
-        strategy.strategyName,
-        strategy.serviceName,
-        strategy.owner,
-      ]
+    return tools.filter((tool) => {
+      const haystack = [tool.toolName, tool.category, tool.borrower || '']
         .join(' ')
         .toLowerCase();
 
       return haystack.includes(term);
     });
-  }, [searchTerm, strategies]);
+  }, [searchTerm, tools]);
 
   const handleOpenCreate = () => {
-    setEditingStrategy(null);
+    setEditingTool(null);
     setFormError('');
     setIsModalOpen(true);
   };
 
-  const handleOpenEdit = (strategy) => {
-    setEditingStrategy(strategy);
+  const handleOpenEdit = (tool) => {
+    setEditingTool(tool);
     setFormError('');
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setEditingStrategy(null);
+    setEditingTool(null);
     setFormError('');
   };
 
@@ -88,14 +84,12 @@ function StrategyDashboard() {
     setFormError('');
 
     try {
-      if (editingStrategy) {
-        const updatedStrategy = await updateStrategy(editingStrategy._id, payload);
-        setStrategies((current) =>
-          current.map((strategy) => (strategy._id === updatedStrategy._id ? updatedStrategy : strategy))
-        );
+      if (editingTool) {
+        const updatedTool = await updateTool(editingTool._id, payload);
+        setTools((current) => current.map((tool) => (tool._id === updatedTool._id ? updatedTool : tool)));
       } else {
-        const createdStrategy = await createStrategy(payload);
-        setStrategies((current) => [createdStrategy, ...current]);
+        const createdTool = await createTool(payload);
+        setTools((current) => [createdTool, ...current]);
       }
 
       handleCloseModal();
@@ -106,8 +100,8 @@ function StrategyDashboard() {
     }
   };
 
-  const handleDeleteRequest = (strategy) => {
-    setDeleteTarget(strategy);
+  const handleDeleteRequest = (tool) => {
+    setDeleteTarget(tool);
   };
 
   const handleDeleteConfirm = async () => {
@@ -119,8 +113,8 @@ function StrategyDashboard() {
     setError('');
 
     try {
-      await deleteStrategy(deleteTarget._id);
-      setStrategies((current) => current.filter((strategy) => strategy._id !== deleteTarget._id));
+      await deleteTool(deleteTarget._id);
+      setTools((current) => current.filter((tool) => tool._id !== deleteTarget._id));
       setDeleteTarget(null);
     } catch (err) {
       setError(extractErrorMessage(err));
@@ -133,23 +127,23 @@ function StrategyDashboard() {
     <main className="dashboard-shell">
       <header className="dashboard-header">
         <div>
-          <p className="eyebrow">Internal operations</p>
-          <h1>Strategy dashboard</h1>
-          <p className="dashboard-subtitle">Track service decoupling initiatives with a clear, operational view.</p>
+          <p className="eyebrow">Community operations</p>
+          <h1>Tool lending dashboard</h1>
+          <p className="dashboard-subtitle">Track available tools, borrower activity, and maintenance needs in one place.</p>
         </div>
-        <button aria-label="Add a new strategy" className="button-primary" onClick={handleOpenCreate} type="button">
-          Add Strategy
+        <button aria-label="Add a new tool" className="button-primary" onClick={handleOpenCreate} type="button">
+          Add Tool
         </button>
       </header>
 
-      <section className="toolbar" aria-label="Strategy controls">
-        <label className="search-field" htmlFor="strategy-search">
-          <span className="sr-only">Search strategies</span>
+      <section className="toolbar" aria-label="Tool controls">
+        <label className="search-field" htmlFor="tool-search">
+          <span className="sr-only">Search tools</span>
           <input
-            aria-label="Search strategies"
-            id="strategy-search"
+            aria-label="Search tools"
+            id="tool-search"
             onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Search by strategy, service, or owner"
+            placeholder="Search by tool, category, or borrower"
             type="search"
             value={searchTerm}
           />
@@ -162,25 +156,25 @@ function StrategyDashboard() {
         </div>
       ) : null}
 
-      <StrategyTable
+      <ToolTable
         isLoading={loading}
         onDelete={handleDeleteRequest}
         onEdit={handleOpenEdit}
-        strategies={filteredStrategies}
+        tools={filteredTools}
       />
 
       {isModalOpen ? (
-        <div className="modal-overlay" role="dialog" aria-label={editingStrategy ? 'Edit strategy' : 'Create strategy'} aria-modal="true">
+        <div className="modal-overlay" role="dialog" aria-label={editingTool ? 'Edit tool' : 'Create tool'} aria-modal="true">
           <div className="modal-card">
             <div className="modal-header">
-              <h2>{editingStrategy ? 'Edit strategy' : 'Create strategy'}</h2>
-              <button aria-label="Close strategy form" className="icon-button" onClick={handleCloseModal} type="button">
+              <h2>{editingTool ? 'Edit tool' : 'Create tool'}</h2>
+              <button aria-label="Close tool form" className="icon-button" onClick={handleCloseModal} type="button">
                 ×
               </button>
             </div>
-            <StrategyForm
-              key={editingStrategy ? editingStrategy._id : 'new'}
-              initialValues={editingStrategy}
+            <ToolForm
+              key={editingTool ? editingTool._id : 'new'}
+              initialValues={editingTool}
               isSubmitting={isSubmitting}
               onCancel={handleCloseModal}
               onSubmit={handleSubmit}
@@ -193,9 +187,9 @@ function StrategyDashboard() {
       {deleteTarget ? (
         <div className="modal-overlay" role="dialog" aria-label="Confirm deletion" aria-modal="true">
           <div className="modal-card confirm-card">
-            <h2>Delete strategy?</h2>
+            <h2>Delete tool?</h2>
             <p>
-              This action will remove <strong>{deleteTarget.strategyName}</strong> from the dashboard.
+              This action will remove <strong>{deleteTarget.toolName}</strong> from the dashboard.
             </p>
             <div className="form-actions">
               <button aria-label="Cancel deletion" className="button-secondary" onClick={() => setDeleteTarget(null)} type="button">
@@ -212,4 +206,4 @@ function StrategyDashboard() {
   );
 }
 
-export default StrategyDashboard;
+export default ToolDashboard;

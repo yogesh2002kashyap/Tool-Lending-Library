@@ -56,19 +56,19 @@
   box-shadow: 0 10px 30px rgba(17, 24, 39, 0.04);
 }
 
-.strategy-table {
+.tool-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.strategy-table th,
-.strategy-table td {
+.tool-table th,
+.tool-table td {
   padding: 16px 18px;
   text-align: left;
   border-bottom: 1px solid #f3f4f6;
 }
 
-.strategy-table th {
+.tool-table th {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -173,7 +173,7 @@
   margin-bottom: 16px;
 }
 
-.strategy-form {
+.tool-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -310,29 +310,29 @@
     grid-template-columns: 1fr;
   }
 
-  .strategy-table th,
-  .strategy-table td {
+  .tool-table th,
+  .tool-table td {
     padding: 12px 10px;
   }
 
-  .strategy-table thead {
+  .tool-table thead {
     display: none;
   }
 
-  .strategy-table,
-  .strategy-table tbody,
-  .strategy-table tr,
-  .strategy-table td {
+  .tool-table,
+  .tool-table tbody,
+  .tool-table tr,
+  .tool-table td {
     display: block;
     width: 100%;
   }
 
-  .strategy-table tr {
+  .tool-table tr {
     border-bottom: 1px solid #f3f4f6;
     padding: 8px 0;
   }
 
-  .strategy-table td {
+  .tool-table td {
     border-bottom: none;
     padding: 6px 10px;
   }

@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api/strategies';
+const API_URL = 'http://localhost:5000/api/tools';
 
 async function postData(url, data = {}) {
   const response = await fetch(url, {
@@ -13,11 +13,12 @@ async function postData(url, data = {}) {
 async function runTests() {
   console.log('--- TEST 1: Valid Data ---');
   let res = await postData(API_URL, {
-    strategyName: 'Test Strategy',
-    serviceName: 'Test Service',
-    communicationType: 'REST',
+    toolName: 'Test Tool',
+    category: 'Hand Tools',
+    condition: 'Good',
+    status: 'Available',
+    borrower: 'Test Borrower',
     description: 'Test description',
-    owner: 'Test Owner',
   });
   console.log('Status:', res.status);
   console.log('Response:', res.data);
@@ -27,10 +28,10 @@ async function runTests() {
   console.log('Status:', res.status, res.data);
 
   console.log('\n--- TEST 3: Missing one field at a time ---');
-  const requiredFields = ['strategyName', 'serviceName', 'communicationType', 'description', 'owner'];
+  const requiredFields = ['toolName', 'category', 'condition', 'description'];
   for (const field of requiredFields) {
     const payload = {
-      strategyName: 'A', serviceName: 'A', communicationType: 'A', description: 'A', owner: 'A'
+      toolName: 'A', category: 'A', condition: 'Good', status: 'Available', description: 'A', borrower: 'A'
     };
     delete payload[field];
     res = await postData(API_URL, payload);
@@ -39,11 +40,12 @@ async function runTests() {
 
   console.log('\n--- TEST 4: XSS Payload ---');
   res = await postData(API_URL, {
-    strategyName: '<script>alert("xss")</script>',
-    serviceName: '<img src="x" onerror="alert(1)">',
-    communicationType: 'REST',
+    toolName: '<script>alert("xss")</script>',
+    category: '<img src="x" onerror="alert(1)">',
+    condition: 'Good',
+    status: 'Available',
+    borrower: '<b>Borrower</b>',
     description: '<iframe src="javascript:alert(1)">',
-    owner: '<b>Owner</b>',
   });
   console.log('Status:', res.status);
   console.log('Sanitized Data:', res.data);

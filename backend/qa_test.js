@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const Strategy = require('./models/Strategy');
+const Tool = require('./models/Tool');
 
-const API_URL = 'http://localhost:5000/api/strategies';
+const API_URL = 'http://localhost:5000/api/tools';
 
 async function postData(url, data = {}) {
   const response = await fetch(url, {
@@ -44,27 +44,29 @@ async function runTests() {
     await mongoose.connect(process.env.MONGO_URI);
     
     console.log('\n--- Test 2: Clear Collection ---');
-    await Strategy.deleteMany({});
+    await Tool.deleteMany({});
     let res = await getData(API_URL);
     console.log('HTTP Status:', res.status, res.status === 200 ? 'PASS' : 'FAIL');
     console.log('Is empty array:', Array.isArray(res.data) && res.data.length === 0 ? 'PASS' : 'FAIL');
 
-    console.log('\n--- Test 1: Seed and Get Strategies ---');
-    const doc1 = await Strategy.create({
-      strategyName: 'Strategy 1',
-      serviceName: 'Service 1',
-      communicationType: 'REST',
-      description: 'Desc 1',
-      owner: 'Owner 1'
+    console.log('\n--- Test 1: Seed and Get Tools ---');
+    const doc1 = await Tool.create({
+      toolName: 'Tool 1',
+      category: 'Power Tools',
+      condition: 'Good',
+      status: 'Available',
+      borrower: 'Owner 1',
+      description: 'Desc 1'
     });
     // Add artificial delay to ensure different createdAt timestamps
     await new Promise(resolve => setTimeout(resolve, 1000));
-    const doc2 = await Strategy.create({
-      strategyName: 'Strategy 2',
-      serviceName: 'Service 2',
-      communicationType: 'gRPC',
-      description: 'Desc 2',
-      owner: 'Owner 2'
+    const doc2 = await Tool.create({
+      toolName: 'Tool 2',
+      category: 'Hand Tools',
+      condition: 'Excellent',
+      status: 'Borrowed',
+      borrower: 'Owner 2',
+      description: 'Desc 2'
     });
     
     res = await getData(API_URL);
@@ -77,21 +79,22 @@ async function runTests() {
         }
     }
     // Explicitly check that doc2 is first in the array because it was created later
-    const newestFirst = res.data[0].strategyName === 'Strategy 2';
+    const newestFirst = res.data[0].toolName === 'Tool 2';
     console.log('Sorted by createdAt descending:', (sortedDesc && newestFirst) ? 'PASS' : 'FAIL');
 
     console.log('\n--- Test 3: Response Consistency ---');
     console.log('HTTP Status:', res.status, res.status === 200 ? 'PASS' : 'FAIL');
     console.log('Content-Type header:', res.headers.get('content-type').includes('application/json') ? 'PASS' : 'FAIL');
-    console.log('JSON Structure matches conventions:', (res.data[0].strategyName && res.data[0]._id) ? 'PASS' : 'FAIL');
+    console.log('JSON Structure matches conventions:', (res.data[0].toolName && res.data[0]._id) ? 'PASS' : 'FAIL');
 
     console.log('\n--- Test 4: Regression Testing ---');
     const postRes = await postData(API_URL, {
-      strategyName: 'Strategy 3',
-      serviceName: 'Service 3',
-      communicationType: 'REST',
-      description: 'Desc 3',
-      owner: 'Owner 3'
+      toolName: 'Tool 3',
+      category: 'Garden Tools',
+      condition: 'Fair',
+      status: 'Maintenance',
+      borrower: 'Owner 3',
+      description: 'Desc 3'
     });
     console.log('POST Status:', postRes.status, postRes.status === 201 ? 'PASS' : 'FAIL');
     

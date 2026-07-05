@@ -3,7 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/errorHandler');
-const strategyRoutes = require('./routes/strategyRoutes');
+const toolRoutes = require('./routes/toolRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -13,7 +13,7 @@ connectDB();
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:5173', 'https://strategy-manager-iota.vercel.app'];
+const allowedOrigins = ['http://localhost:5173', 'https://tool-lending-library.vercel.app'];
 
 // Middleware
 app.use(
@@ -34,10 +34,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'success', message: 'API is running' });
+  res.status(200).json({ status: 'success', message: 'Tool Lending Library API is running' });
 });
 
-app.use('/api/strategies', strategyRoutes);
+app.use('/api/tools', toolRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

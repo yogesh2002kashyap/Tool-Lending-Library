@@ -1,12 +1,12 @@
-# Strategy Dashboard Frontend
+# Tool Lending Library Frontend
 
-This React frontend provides a clean, internal-facing dashboard for managing microservice decoupling strategies. It is designed to feel polished and minimal for portfolio presentation while remaining fully connected to the existing Express and MongoDB backend.
+This React frontend provides a clean, internal-facing dashboard for managing community tool lending inventory. It is designed to feel polished and minimal while remaining fully connected to the existing Express and MongoDB backend.
 
 ## Highlights
 
-- Responsive strategy dashboard layout
-- Create, edit, and delete strategy entries
-- Local search by strategy name, service name, or owner
+- Responsive tool lending dashboard layout
+- Create, edit, and delete tool entries
+- Local search by tool name, category, or borrower
 - Client-side validation and accessible form interactions
 - Loading, empty, and error states for a production-style experience
 
