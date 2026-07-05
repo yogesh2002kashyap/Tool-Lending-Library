@@ -1,16 +1,24 @@
-# React + Vite
+# Strategy Dashboard Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This React frontend provides a clean, internal-facing dashboard for managing microservice decoupling strategies. It is designed to feel polished and minimal for portfolio presentation while remaining fully connected to the existing Express and MongoDB backend.
 
-Currently, two official plugins are available:
+## Highlights
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Responsive strategy dashboard layout
+- Create, edit, and delete strategy entries
+- Local search by strategy name, service name, or owner
+- Client-side validation and accessible form interactions
+- Loading, empty, and error states for a production-style experience
 
-## React Compiler
+## Run locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Install dependencies:
+   - `npm install`
+2. Start the development server:
+   - `npm run dev`
+3. Open the local Vite URL shown in the terminal.
 
-## Expanding the ESLint configuration
+## Verify
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `npm run build`
+- `npm run lint`
