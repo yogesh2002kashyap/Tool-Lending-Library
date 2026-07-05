@@ -1,4 +1,3 @@
-
 const asyncHandler = require('../utils/asyncHandler');
 const Strategy = require('../models/Strategy');
 const mongoose = require('mongoose');
@@ -13,13 +12,13 @@ const STRATEGY_TEXT_FIELDS = [
 ];
 const STRATEGY_STATUS_VALUES = ['Planned', 'Active', 'Deprecated'];
 const STRATEGY_UPDATE_FIELDS = [...STRATEGY_TEXT_FIELDS, 'status'];
-const sanitizeStrategyUpdateValue = (value) => xss(value.trim(), {
+const sanitizeStrategyValue = (value) => xss(value.trim(), {
   whiteList: {},
   stripIgnoreTag: true,
   stripIgnoreTagBody: ['script'],
 });
 
-const buildStrategyUpdateData = (payload) => {
+const buildStrategyData = (payload, { requireAllFields = false } = {}) => {
   if (!payload || Array.isArray(payload) || typeof payload !== 'object') {
     return {
       error: 'Request body must be a JSON object',
@@ -37,21 +36,24 @@ const buildStrategyUpdateData = (payload) => {
     };
   }
 
-  STRATEGY_UPDATE_FIELDS.forEach((field) => {
+  for (const field of STRATEGY_UPDATE_FIELDS) {
     if (payload[field] === undefined) {
-      return;
+      if (requireAllFields && STRATEGY_TEXT_FIELDS.includes(field)) {
+        return {
+          error: 'Please provide all required fields',
+        };
+      }
+
+      continue;
     }
 
     if (typeof payload[field] !== 'string' || payload[field].trim() === '') {
-      updateData.error = `${field} must be a non-empty string`;
-      return;
+      return {
+        error: `${field} must be a non-empty string`,
+      };
     }
 
-    updateData[field] = sanitizeStrategyUpdateValue(payload[field]);
-  });
-
-  if (updateData.error) {
-    return { error: updateData.error };
+    updateData[field] = sanitizeStrategyValue(payload[field]);
   }
 
   if (updateData.status && !STRATEGY_STATUS_VALUES.includes(updateData.status)) {
@@ -67,6 +69,23 @@ const buildStrategyUpdateData = (payload) => {
   }
 
   return { updateData };
+};
+
+const buildStrategyCreateData = (payload) => {
+  const { updateData, error } = buildStrategyData(payload, {
+    requireAllFields: true,
+  });
+
+  if (error) {
+    return { error };
+  }
+
+  return {
+    createData: {
+      ...updateData,
+      status: updateData.status || 'Planned',
+    },
+  };
 };
 
 // @desc    Get all strategies
@@ -100,29 +119,13 @@ const getStrategyById = asyncHandler(async (req, res) => {
 // @route   POST /api/strategies
 // @access  Public
 const createStrategy = asyncHandler(async (req, res) => {
-  const {
-    strategyName,
-    serviceName,
-    communicationType,
-    description,
-    owner,
-    status,
-  } = req.body;
+  const { createData, error } = buildStrategyCreateData(req.body);
 
-  if (!strategyName || !serviceName || !communicationType || !description || !owner) {
-    return res.status(400).json({ message: 'Please provide all required fields' });
+  if (error) {
+    return res.status(400).json({ message: error });
   }
 
-  const sanitizedData = {
-    strategyName: xss(strategyName),
-    serviceName: xss(serviceName),
-    communicationType: xss(communicationType),
-    description: xss(description),
-    owner: xss(owner),
-    status: status ? xss(status) : 'Planned',
-  };
-
-  const strategy = await Strategy.create(sanitizedData);
+  const strategy = await Strategy.create(createData);
 
   console.log('[Analytics] User interacted with Microservice Decoupling Strategy');
 
@@ -139,7 +142,7 @@ const updateStrategy = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'Invalid strategy ID' });
   }
 
-  const { updateData, error } = buildStrategyUpdateData(req.body);
+  const { updateData, error } = buildStrategyData(req.body);
 
   if (error) {
     return res.status(400).json({ message: error });

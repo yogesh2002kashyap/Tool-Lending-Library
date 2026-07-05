@@ -15,7 +15,9 @@
    - `Create Strategy`
    - `Get All Strategies`
    - `Get Strategy By ID`
+   - `Update Strategy`
+   - `Delete Strategy`
 
-The `Create Strategy` request automatically saves the response `_id` into the `strategyId` environment variable. The `Get Strategy By ID` request reuses that value through `{{strategyId}}`.
+The `Create Strategy` request automatically saves the response `_id` into the `strategyId` environment variable. The get-by-id, update, and delete requests reuse that value through `{{strategyId}}`.
 
 The collection includes tests for expected status codes, response time, JSON content type, and required response fields.

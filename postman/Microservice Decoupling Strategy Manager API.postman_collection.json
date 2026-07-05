@@ -2,13 +2,13 @@
   "info": {
     "_postman_id": "8f3e2c19-9c75-4bd5-a2d8-66f740ef05b0",
     "name": "Microservice Decoupling Strategy Manager API",
-    "description": "Postman collection for validating the Strategy Manager API. Current coverage includes create, list, and get-by-id endpoints, with variables prepared for future CRUD expansion.",
+    "description": "Postman collection for validating the Strategy Manager API CRUD endpoints.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
       "name": "Strategies",
-      "description": "Strategy resource requests. Update and delete requests can be added here when those endpoints are implemented.",
+      "description": "Strategy resource CRUD requests.",
       "item": [
         {
           "name": "Create Strategy",
@@ -190,6 +190,136 @@
                   "",
                   "pm.test('Returned strategy matches environment strategyId', function () {",
                   "  pm.expect(strategy._id).to.eql(pm.environment.get('strategyId'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Strategy",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Active\",\n  \"description\": \"Updated migration plan for asynchronous service communication.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/strategies/{{strategyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "strategies",
+                "{{strategyId}}"
+              ]
+            },
+            "description": "Updates the strategy identified by the `strategyId` environment variable."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get('strategyId')) {",
+                  "  throw new Error('Missing strategyId. Run Create Strategy first or set the strategyId environment variable.');",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Content-Type is application/json', function () {",
+                  "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "const strategy = pm.response.json();",
+                  "",
+                  "pm.test('Response includes required strategy fields', function () {",
+                  "  pm.expect(strategy).to.include.keys('_id', 'strategyName', 'serviceName', 'communicationType', 'description', 'owner', 'status', 'createdAt', 'updatedAt');",
+                  "});",
+                  "",
+                  "pm.test('Strategy was updated', function () {",
+                  "  pm.expect(strategy._id).to.eql(pm.environment.get('strategyId'));",
+                  "  pm.expect(strategy.status).to.eql('Active');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Strategy",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/strategies/{{strategyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "strategies",
+                "{{strategyId}}"
+              ]
+            },
+            "description": "Deletes the strategy identified by the `strategyId` environment variable."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get('strategyId')) {",
+                  "  throw new Error('Missing strategyId. Run Create Strategy first or set the strategyId environment variable.');",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Content-Type is application/json', function () {",
+                  "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "const result = pm.response.json();",
+                  "",
+                  "pm.test('Response confirms deletion', function () {",
+                  "  pm.expect(result).to.have.property('message', 'Strategy deleted successfully');",
                   "});"
                 ]
               }
